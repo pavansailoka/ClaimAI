@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ClaimAI API Dashboard</title>
+<style>
+body{font-family:Arial,sans-serif;max-width:1000px;margin:40px auto;padding:20px;background:#f5f7fb;color:#172033}
+.card{background:white;padding:22px;border-radius:14px;margin-bottom:18px;box-shadow:0 3px 15px #0001}
+button{padding:10px 15px;margin:5px;border:0;border-radius:8px;cursor:pointer}
+pre{background:#111827;color:#e5e7eb;padding:16px;border-radius:10px;overflow:auto}
+select{padding:10px;border-radius:8px}
+</style>
+</head>
+<body>
+<h1>ClaimAI</h1>
+<p>Frontend connected to Flask API.</p>
+<div class="card">
+<select id="scenario">
+<option value="agriculture">Agriculture</option>
+<option value="motor">Motor</option>
+<option value="health">Health</option>
+<option value="property">Property</option>
+</select>
+<br>
+<button onclick="getClaim()">Get Claim</button>
+<button onclick="addEvidence()">Add Evidence</button>
+<button onclick="verifyClaim()">Verify</button>
+<button onclick="resetClaim()">Reset</button>
+<button onclick="getAll()">Get All Claims</button>
+</div>
+<div class="card"><h3>API Response</h3><pre id="output">Click a button...</pre></div>
+<script>
+const API = "/api";
+const out = document.getElementById("output");
+const scenario = () => document.getElementById("scenario").value;
+async function call(url, options={}) {
+  const res = await fetch(url, options);
+  const data = await res.json().catch(()=>({error:"Invalid response"}));
+  out.textContent = JSON.stringify(data, null, 2);
+}
+function getClaim(){call(`${API}/claims/${scenario()}`)}
+function getAll(){call(`${API}/claims`)}
+function addEvidence(){call(`${API}/claims/${scenario()}/evidence`,{method:"POST"})}
+function verifyClaim(){call(`${API}/claims/${scenario()}/verify`,{method:"POST"})}
+function resetClaim(){call(`${API}/claims/${scenario()}/reset`,{method:"POST"})}
+</script>
+</body>
+</html>
